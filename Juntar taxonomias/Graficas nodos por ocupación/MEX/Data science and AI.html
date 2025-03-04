@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Artificial Intelligence scientist", "label": "Artificial Intelligence scientist", "shape": "dot", "title": "Artificial Intelligence scientist"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Artificial intelligence engineer", "label": "Artificial intelligence engineer", "shape": "dot", "title": "Artificial intelligence engineer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Data analyst", "label": "Data analyst", "shape": "dot", "title": "Data analyst"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Data architect", "label": "Data architect", "shape": "dot", "title": "Data architect"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Data science engineer", "label": "Data science engineer", "shape": "dot", "title": "Data science engineer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Data scientist", "label": "Data scientist", "shape": "dot", "title": "Data scientist"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Machine Learning engineer", "label": "Machine Learning engineer", "shape": "dot", "title": "Machine Learning engineer"}]);
+                  edges = new vis.DataSet([{"from": "Artificial Intelligence scientist", "title": "Weight: 150", "to": "Artificial intelligence engineer", "value": 150, "width": 600}, {"from": "Artificial Intelligence scientist", "title": "Weight: 117", "to": "Data analyst", "value": 117, "width": 468}, {"from": "Artificial Intelligence scientist", "title": "Weight: 101", "to": "Data architect", "value": 101, "width": 404}, {"from": "Artificial Intelligence scientist", "title": "Weight: 131", "to": "Data science engineer", "value": 131, "width": 524}, {"from": "Artificial Intelligence scientist", "title": "Weight: 172", "to": "Data scientist", "value": 172, "width": 688}, {"from": "Artificial Intelligence scientist", "title": "Weight: 147", "to": "Machine Learning engineer", "value": 147, "width": 588}, {"from": "Artificial intelligence engineer", "title": "Weight: 185", "to": "Data analyst", "value": 185, "width": 740}, {"from": "Artificial intelligence engineer", "title": "Weight: 210", "to": "Data architect", "value": 210, "width": 840}, {"from": "Artificial intelligence engineer", "title": "Weight: 229", "to": "Data science engineer", "value": 229, "width": 916}, {"from": "Artificial intelligence engineer", "title": "Weight: 299", "to": "Data scientist", "value": 299, "width": 1196}, {"from": "Artificial intelligence engineer", "title": "Weight: 242", "to": "Machine Learning engineer", "value": 242, "width": 968}, {"from": "Data analyst", "title": "Weight: 242", "to": "Data architect", "value": 242, "width": 968}, {"from": "Data analyst", "title": "Weight: 308", "to": "Data science engineer", "value": 308, "width": 1232}, {"from": "Data analyst", "title": "Weight: 389", "to": "Data scientist", "value": 389, "width": 1556}, {"from": "Data analyst", "title": "Weight: 208", "to": "Machine Learning engineer", "value": 208, "width": 832}, {"from": "Data architect", "title": "Weight: 264", "to": "Data science engineer", "value": 264, "width": 1056}, {"from": "Data architect", "title": "Weight: 278", "to": "Data scientist", "value": 278, "width": 1112}, {"from": "Data architect", "title": "Weight: 213", "to": "Machine Learning engineer", "value": 213, "width": 852}, {"from": "Data science engineer", "title": "Weight: 380", "to": "Data scientist", "value": 380, "width": 1520}, {"from": "Data science engineer", "title": "Weight: 268", "to": "Machine Learning engineer", "value": 268, "width": 1072}, {"from": "Data scientist", "title": "Weight: 317", "to": "Machine Learning engineer", "value": 317, "width": 1268}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

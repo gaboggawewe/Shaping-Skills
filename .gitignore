@@ -1,0 +1,7 @@
+Extraction/.DS_Store
+Extraction/JSearch-jobposts
+Extraction/Indeed-jobposts
+Extraction/OCC-jobposts
+assets/
+# Ignore all CSV files
+*.csv

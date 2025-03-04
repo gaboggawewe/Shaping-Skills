@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "App developer", "label": "App developer", "shape": "dot", "title": "App developer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Computer Systems Analyst", "label": "Computer Systems Analyst", "shape": "dot", "title": "Computer Systems Analyst"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Embedded systems engineer", "label": "Embedded systems engineer", "shape": "dot", "title": "Embedded systems engineer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Software Quality Assurance Analysts and Testers", "label": "Software Quality Assurance Analysts and Testers", "shape": "dot", "title": "Software Quality Assurance Analysts and Testers"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Software architect", "label": "Software architect", "shape": "dot", "title": "Software architect"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Software developer", "label": "Software developer", "shape": "dot", "title": "Software developer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Software engineer", "label": "Software engineer", "shape": "dot", "title": "Software engineer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Software infrastructure architect", "label": "Software infrastructure architect", "shape": "dot", "title": "Software infrastructure architect"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "User interface designer", "label": "User interface designer", "shape": "dot", "title": "User interface designer"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Web and Digital Interface Designers", "label": "Web and Digital Interface Designers", "shape": "dot", "title": "Web and Digital Interface Designers"}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Web developer", "label": "Web developer", "shape": "dot", "title": "Web developer"}]);
+                  edges = new vis.DataSet([{"from": "App developer", "title": "Weight: 359", "to": "Computer Systems Analyst", "value": 359, "width": 718}, {"from": "App developer", "title": "Weight: 328", "to": "Embedded systems engineer", "value": 328, "width": 656}, {"from": "App developer", "title": "Weight: 142", "to": "Software Quality Assurance Analysts and Testers", "value": 142, "width": 284}, {"from": "App developer", "title": "Weight: 382", "to": "Software architect", "value": 382, "width": 764}, {"from": "App developer", "title": "Weight: 624", "to": "Software developer", "value": 624, "width": 1248}, {"from": "App developer", "title": "Weight: 322", "to": "Software engineer", "value": 322, "width": 644}, {"from": "App developer", "title": "Weight: 376", "to": "Software infrastructure architect", "value": 376, "width": 752}, {"from": "App developer", "title": "Weight: 385", "to": "User interface designer", "value": 385, "width": 770}, {"from": "App developer", "title": "Weight: 154", "to": "Web and Digital Interface Designers", "value": 154, "width": 308}, {"from": "App developer", "title": "Weight: 475", "to": "Web developer", "value": 475, "width": 950}, {"from": "Computer Systems Analyst", "title": "Weight: 281", "to": "Embedded systems engineer", "value": 281, "width": 562}, {"from": "Computer Systems Analyst", "title": "Weight: 154", "to": "Software Quality Assurance Analysts and Testers", "value": 154, "width": 308}, {"from": "Computer Systems Analyst", "title": "Weight: 370", "to": "Software architect", "value": 370, "width": 740}, {"from": "Computer Systems Analyst", "title": "Weight: 478", "to": "Software developer", "value": 478, "width": 956}, {"from": "Computer Systems Analyst", "title": "Weight: 241", "to": "Software engineer", "value": 241, "width": 482}, {"from": "Computer Systems Analyst", "title": "Weight: 376", "to": "Software infrastructure architect", "value": 376, "width": 752}, {"from": "Computer Systems Analyst", "title": "Weight: 350", "to": "User interface designer", "value": 350, "width": 700}, {"from": "Computer Systems Analyst", "title": "Weight: 139", "to": "Web and Digital Interface Designers", "value": 139, "width": 278}, {"from": "Computer Systems Analyst", "title": "Weight: 373", "to": "Web developer", "value": 373, "width": 746}, {"from": "Embedded systems engineer", "title": "Weight: 112", "to": "Software Quality Assurance Analysts and Testers", "value": 112, "width": 224}, {"from": "Embedded systems engineer", "title": "Weight: 322", "to": "Software architect", "value": 322, "width": 644}, {"from": "Embedded systems engineer", "title": "Weight: 495", "to": "Software developer", "value": 495, "width": 990}, {"from": "Embedded systems engineer", "title": "Weight: 268", "to": "Software engineer", "value": 268, "width": 536}, {"from": "Embedded systems engineer", "title": "Weight: 333", "to": "Software infrastructure architect", "value": 333, "width": 666}, {"from": "Embedded systems engineer", "title": "Weight: 286", "to": "User interface designer", "value": 286, "width": 572}, {"from": "Embedded systems engineer", "title": "Weight: 109", "to": "Web and Digital Interface Designers", "value": 109, "width": 218}, {"from": "Embedded systems engineer", "title": "Weight: 346", "to": "Web developer", "value": 346, "width": 692}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 122", "to": "Software architect", "value": 122, "width": 244}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 182", "to": "Software developer", "value": 182, "width": 364}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 110", "to": "Software engineer", "value": 110, "width": 220}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 118", "to": "Software infrastructure architect", "value": 118, "width": 236}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 125", "to": "User interface designer", "value": 125, "width": 250}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 65", "to": "Web and Digital Interface Designers", "value": 65, "width": 130}, {"from": "Software Quality Assurance Analysts and Testers", "title": "Weight: 149", "to": "Web developer", "value": 149, "width": 298}, {"from": "Software architect", "title": "Weight: 569", "to": "Software developer", "value": 569, "width": 1138}, {"from": "Software architect", "title": "Weight: 313", "to": "Software engineer", "value": 313, "width": 626}, {"from": "Software architect", "title": "Weight: 408", "to": "Software infrastructure architect", "value": 408, "width": 816}, {"from": "Software architect", "title": "Weight: 375", "to": "User interface designer", "value": 375, "width": 750}, {"from": "Software architect", "title": "Weight: 138", "to": "Web and Digital Interface Designers", "value": 138, "width": 276}, {"from": "Software architect", "title": "Weight: 411", "to": "Web developer", "value": 411, "width": 822}, {"from": "Software developer", "title": "Weight: 488", "to": "Software engineer", "value": 488, "width": 976}, {"from": "Software developer", "title": "Weight: 510", "to": "Software infrastructure architect", "value": 510, "width": 1020}, {"from": "Software developer", "title": "Weight: 522", "to": "User interface designer", "value": 522, "width": 1044}, {"from": "Software developer", "title": "Weight: 201", "to": "Web and Digital Interface Designers", "value": 201, "width": 402}, {"from": "Software developer", "title": "Weight: 755", "to": "Web developer", "value": 755, "width": 1510}, {"from": "Software engineer", "title": "Weight: 283", "to": "Software infrastructure architect", "value": 283, "width": 566}, {"from": "Software engineer", "title": "Weight: 245", "to": "User interface designer", "value": 245, "width": 490}, {"from": "Software engineer", "title": "Weight: 122", "to": "Web and Digital Interface Designers", "value": 122, "width": 244}, {"from": "Software engineer", "title": "Weight: 373", "to": "Web developer", "value": 373, "width": 746}, {"from": "Software infrastructure architect", "title": "Weight: 354", "to": "User interface designer", "value": 354, "width": 708}, {"from": "Software infrastructure architect", "title": "Weight: 126", "to": "Web and Digital Interface Designers", "value": 126, "width": 252}, {"from": "Software infrastructure architect", "title": "Weight: 354", "to": "Web developer", "value": 354, "width": 708}, {"from": "User interface designer", "title": "Weight: 282", "to": "Web and Digital Interface Designers", "value": 282, "width": 564}, {"from": "User interface designer", "title": "Weight: 468", "to": "Web developer", "value": 468, "width": 936}, {"from": "Web and Digital Interface Designers", "title": "Weight: 184", "to": "Web developer", "value": 184, "width": 368}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
