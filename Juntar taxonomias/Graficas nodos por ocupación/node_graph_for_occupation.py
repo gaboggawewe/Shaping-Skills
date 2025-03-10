@@ -98,9 +98,15 @@ for index, row in tax_data.iterrows():
 
 # Crear diccionario de conexiones con pesos
 edges = {}
+node_connections = {occupation: 0 for occupation in selected_occupations}  # Contador de conexiones para cada nodo
 
 # Comparar cada par de ocupaciones
 occupations = list(occupation_competences.keys())
+
+
+# Normalizar el tamaño de los nodos
+min_size = len(selected_occupations)
+max_size = min_size * 10
 
 for idx, (src, dst) in enumerate(combinations(occupations, 2)):
     shared_competences = occupation_competences[src] & occupation_competences[dst]  # Intersección de competencias
@@ -111,17 +117,31 @@ for idx, (src, dst) in enumerate(combinations(occupations, 2)):
             edges[(dst, src)] += len(shared_competences)
         else:
             edges[(src, dst)] = len(shared_competences)  # Se inicializa con el número de competencias compartidas
+        
+        # Incrementar el contador de conexiones de los nodos conectados
+        node_connections[src] += min_size
+        node_connections[dst] += min_size
     
     if idx % 100000 == 0:
         print(f"Procesadas {idx} comparaciones de {len(occupations) * (len(occupations) - 1) // 2}")
 
+max_connections = max(node_connections.values())
+min_connections = min(node_connections.values())
+
+if max_connections == min_connections:
+    node_sizes = {occupation: (min_size + max_size) / 2 for occupation in node_connections}
+else:
+    node_sizes = {
+        occupation: min_size + (max_size - min_size) * (connections - min_connections) / (max_connections - min_connections)
+        for occupation, connections in node_connections.items()
+    }
+
 # Agregar nodos y conexiones al grafo
 for (src, dst), weight in edges.items():
-    tax_net.add_node(src, src, title=src)
-    tax_net.add_node(dst, dst, title=dst)
+    tax_net.add_node(src, src, title=src, size=node_sizes[src])
+    tax_net.add_node(dst, dst, title=dst, size=node_sizes[dst])
     tax_net.add_edge(src, dst, value=weight, title=f"Weight: {weight}", width=weight * 2)
 
 tax_net.barnes_hut() #Se utiliza para darle estabilidad a los notos, para que queden fijos y se visualicen de mejor manera
-# Guardar visualización
 # Guardar visualización
 tax_net.show(f"{selected_subsector}.html", notebook=False)
