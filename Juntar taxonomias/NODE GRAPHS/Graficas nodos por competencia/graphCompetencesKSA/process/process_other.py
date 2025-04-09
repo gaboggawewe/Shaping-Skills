@@ -9,21 +9,28 @@ from matplotlib.collections import LineCollection
 import random
 import time
 import re
+from matplotlib import font_manager
+import community as community_louvain
 
 #Variables
-minimum_repetitions = 20  #para filtrarlas, entre más alto, menos competencias
-minimum_weight = 5  #para filtrar las conexiones, entre más alto, menos conexiones
-minimum_connections = 4    #para filtrar los nodos, entre más alto, menos nodos
-node_size = 6   #tamaño de los nodos
-node_separation = 2   #separación entre nodos
+minimum_repetitions = 15  #para filtrarlas, entre más alto, menos competencias
+minimum_weight = 6  #para filtrar las conexiones, entre más alto, menos conexiones
+minimum_connections = 3    #para filtrar los nodos, entre más alto, menos nodos
+node_size = 17   #tamaño de los nodos
+node_separation = 2  #separación entre nodos
+community_resolution = 2.5
+
+# Descargar e instalar la fuente Lato
+font_manager.fontManager.addfont('Lato-Regular.ttf')
+plt.rcParams['font.family'] = 'Lato'
 
 # Función para limpiar los nombres de las competencias
 def clean_competence_name(name):
     return re.sub(r'^\d+\.\s*', '', name)
 
 # Leer archivos CSV
-data = pd.read_csv("3W-DICIEMBRE-MEX-jobposts_competences_llm.csv")
-classification = pd.read_csv("tax-infocomm-3w-diciembre-MEX-2024.csv")
+data = pd.read_csv("3W-JULIO-MEX-jobposts_competences_llm.csv")
+classification = pd.read_csv("tax-infocomm-3w-julio-MEX-2024.csv")
 
 # Limpiar los nombres de las competencias en la columna competences_llm
 data["competences_llm"] = data["competences_llm"].apply(lambda x: [clean_competence_name(comp.strip()) for comp in str(x).split("\n") if comp.strip()])
@@ -74,11 +81,13 @@ def process_category(label):
     nodes_to_remove = [node for node, degree in dict(G.degree()).items() if degree < minimum_connections]
     G.remove_nodes_from(nodes_to_remove)
     
-    # Asignar colores a los nodos
-    colors = list(mcolors.TABLEAU_COLORS.values())
-    random.shuffle(colors)
-    node_colors = {node: colors[i % len(colors)] for i, node in enumerate(G.nodes())}
-    
+    # Detectar comunidades y asignar colores
+    partition = community_louvain.best_partition(G, resolution=community_resolution)
+    unique_clusters = list(set(partition.values()))
+    colors = ['#386191', '#77ABD2', '#5CC09B', '#F8D660', '#EAE9E6']
+    cluster_colors = {cluster: colors[i % len(colors)] for i, cluster in enumerate(unique_clusters)}
+    node_colors = {node: cluster_colors[partition[node]] for node in G.nodes()}
+      
     # Tamaño de nodos basado en su grado
     node_sizes = [((G.degree(node) + 1) ** 2) * node_size for node in G.nodes()]
     
@@ -104,11 +113,12 @@ def process_category(label):
     
     # Dibujar el grafo
     plt.figure(figsize=(12, 8))
-    nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color=[node_colors[node] for node in G.nodes()], alpha=0.8)
-    nx.draw_networkx_labels(G, pos, font_size=9, font_family="Arial")
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), alpha=0.6)
     ax = plt.gca()
     ax.add_collection(lc)
-    plt.title(f"Red de Competencias - {label}", fontsize=14)
+    nx.draw_networkx_nodes(G, pos, node_size=node_sizes, node_color=[node_colors[node] for node in G.nodes()], alpha=0.9)
+    nx.draw_networkx_labels(G, pos, font_size=10, font_family="Lato", font_color='white', bbox=dict(facecolor='black', edgecolor='black', boxstyle='round,pad=0.1'))
+    plt.title(f"Red de Competencias - {label}", fontsize=18, fontfamily="Lato", color='white', bbox=dict(facecolor='black', edgecolor='black', boxstyle='round,pad=0.5'))
     plt.axis("off")
     plt.show()
     
@@ -116,4 +126,4 @@ def process_category(label):
     category_data.to_csv(f"competences_{label.lower()}.csv", index=False)
 
 # Procesar cada categoría
-process_category("Ability")
+process_category("Other")
